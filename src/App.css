@@ -1,0 +1,18 @@
+body,
+html,
+#root,
+.App {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+main {
+  padding: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
