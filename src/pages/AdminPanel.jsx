@@ -23,12 +23,10 @@ const AdminPanel = () => {
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/admin/users`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setUsers(res.data);
-    } catch (err) {
+    } catch {
       console.error("Error loading users");
     }
   };
@@ -37,7 +35,7 @@ const AdminPanel = () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/rooms`);
       setRooms(res.data);
-    } catch (err) {
+    } catch {
       console.error("Error loading rooms");
     }
   };
@@ -48,30 +46,57 @@ const AdminPanel = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookings(res.data);
-    } catch (err) {
+    } catch {
       console.error("Error loading bookings");
     }
   };
 
   const handleDeleteRoom = async roomId => {
-    if (!window.confirm("Are you sure you want to delete this room?")) return;
+    if (!window.confirm("Delete this room?")) return;
     try {
       await axios.delete(`${import.meta.env.VITE_API_URL}/rooms/${roomId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("Room deleted successfully.");
       fetchRooms();
-    } catch (err) {
+    } catch {
       console.error("Error deleting room");
     }
   };
 
-  const handleEditRoom = roomId => {
-    navigate(`/admin/edit-room/${roomId}`);
+  const handleEditRoom = roomId => navigate(`/admin/edit-room/${roomId}`);
+  const handleAddRoom = () => navigate("/admin/add-room");
+
+  // New: Delete booking history
+  const handleDeleteBooking = async bookingId => {
+    if (!window.confirm("Delete this booking history?")) return;
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/admin/bookings/${bookingId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setMessage("Booking history deleted.");
+      fetchBookings();
+    } catch {
+      console.error("Error deleting booking");
+      setMessage("Failed to delete booking history.");
+    }
   };
 
-  const handleAddRoom = () => {
-    navigate("/admin/add-room");
+  // New: Delete a user
+  const handleDeleteUser = async userId => {
+    if (!window.confirm("Delete this user?")) return;
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/admin/users/${userId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setMessage("User deleted successfully.");
+      fetchUsers();
+    } catch {
+      console.error("Error deleting user");
+      setMessage("Failed to delete user.");
+    }
   };
 
   return (
@@ -90,14 +115,25 @@ const AdminPanel = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Actions</th> {/* ← new column */}
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
-              <tr key={user._id}>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
+            {users.map(u => (
+              <tr key={u._id}>
+                <td>{u.name}</td>
+                <td>{u.email}</td>
+                <td>{u.role}</td>
+                <td>
+                  {/* Hide delete button for the logged-in admin themselves */}
+                  {u._id !== /* your admin’s id if needed */ "" && (
+                    <button
+                      onClick={() => handleDeleteUser(u._id)}
+                      style={{ color: "red" }}>
+                      Delete
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -127,15 +163,15 @@ const AdminPanel = () => {
             </tr>
           </thead>
           <tbody>
-            {rooms.map(room => (
-              <tr key={room._id}>
-                <td>{room.name}</td>
-                <td>{room.type}</td>
-                <td>{room.description}</td>
-                <td>${room.price}</td>
+            {rooms.map(r => (
+              <tr key={r._id}>
+                <td>{r.name}</td>
+                <td>{r.type}</td>
+                <td>{r.description}</td>
+                <td>${r.price}</td>
                 <td>
-                  <button onClick={() => handleEditRoom(room._id)}>Edit</button>{" "}
-                  <button onClick={() => handleDeleteRoom(room._id)}>
+                  <button onClick={() => handleEditRoom(r._id)}>Edit</button>{" "}
+                  <button onClick={() => handleDeleteRoom(r._id)}>
                     Delete
                   </button>
                 </td>
@@ -161,23 +197,31 @@ const AdminPanel = () => {
               <th>Check Out</th>
               <th>Paid</th>
               <th>Cancelled</th>
-              <th>Date</th>
+              <th>Created On</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {bookings.map(b => (
               <tr key={b._id}>
-                <td>{b.user?.email || "Unknown"}</td>
-                <td>{b.room?.name || "Deleted Room"}</td>
+                <td>{b.userId?.email || "Unknown"}</td>
+                <td>{b.roomId?.name || "Deleted Room"}</td>
+                <td>{new Date(b.startDate).toLocaleDateString()}</td>
+                <td>{new Date(b.endDate).toLocaleDateString()}</td>
+                <td>{b.paymentId ? "Yes" : "No"}</td>
+                <td>{b.status === "Cancelled" ? "Yes" : "No"}</td>
                 <td>
-                  {b.checkIn ? new Date(b.checkIn).toLocaleDateString() : "-"}
+                  {b.createdAt
+                    ? new Date(b.createdAt).toLocaleDateString()
+                    : "-"}
                 </td>
                 <td>
-                  {b.checkOut ? new Date(b.checkOut).toLocaleDateString() : "-"}
+                  <button
+                    onClick={() => handleDeleteBooking(b._id)}
+                    style={{ color: "red" }}>
+                    Delete
+                  </button>
                 </td>
-                <td>{b.isPaid ? "Yes" : "No"}</td>
-                <td>{b.isCancelled ? "Yes" : "No"}</td>
-                <td>{new Date(b.createdAt).toLocaleDateString()}</td>
               </tr>
             ))}
           </tbody>
