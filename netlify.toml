@@ -1,0 +1,8 @@
+[build]
+  publish   = "dist"        # This is your Vite build output folder
+  command   = "npm run build"
+
+[[redirects]]
+  from   = "/*"             # catch all routes
+  to     = "/index.html"    # serve index.html instead
+  status = 200              # return a 200 so your SPA router takes over
