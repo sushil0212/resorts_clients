@@ -16,6 +16,7 @@ import AddRoom from "./pages/AddRoom";
 import CancelBooking from "./pages/CancelBooking";
 import Footer from "./components/Footer";
 import EditRoom from "./pages/EditRoom"; // ← ADD THIS
+import OtpVerification from "./pages/OtpVerification";
 
 function App() {
   return (
@@ -62,6 +63,10 @@ function App() {
           <Route
             path="/register"
             element={<Register />}
+          />
+          <Route
+            path="/verify-otp"
+            element={<OtpVerification />}
           />
           <Route
             path="/admin"
