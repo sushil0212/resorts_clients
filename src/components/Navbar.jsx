@@ -16,7 +16,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <Link to="/">Resort Booking</Link>
+        <Link to="/">Patal Resort</Link>
       </div>
       <ul className="navbar-links">
         <li>
