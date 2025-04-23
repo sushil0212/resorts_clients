@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="footer-container">
         <div className="footer-col">
           <h4>About Us</h4>
-          <p>Resort Booking provides the best rooms and services.</p>
+          <p>Patal Resorts provides the best rooms and services.</p>
         </div>
         <div className="footer-col">
           <h4>Navigation</h4>
@@ -25,12 +25,12 @@ const Footer = () => {
         </div>
         <div className="footer-col">
           <h4>Contact</h4>
-          <p>Email: support@example.com</p>
-          <p>Phone: +1 234 567 890</p>
+          <p>Email: copycat9650@gmail.com</p>
+          <p>Phone: +977 9819732343</p>
         </div>
       </div>
       <p className="footer-copy">
-        &copy; {new Date().getFullYear()} Resort Booking. All Rights Reserved.
+        &copy; {new Date().getFullYear()} Patal Resort . All Rights Reserved.
       </p>
     </footer>
   );
